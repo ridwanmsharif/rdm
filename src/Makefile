@@ -1,6 +1,6 @@
 .PHONY: all clean
 
-all: LDMParser LDMRun IndexSpecParser FixLispInput PDMParser PDMRun cdbc
+all: LDMParser SQLPParser LDMRun IndexSpecParser FixLispInput PDMParser PDMRun cdbc
 
 LDMRun: PatMatch.cl RuleUse.cl LDMComp.cl CostProb.cl LDMCompLib.cl FuncDep.cl LDMErrorProcs.cl LDMSchemaAccess.cl SelCond.cl LDMSchemaMaint.cl LDMPassOne.cl LDMPassTwo.cl LDMPassThree.cl LDMPassFour.cl LDMPassFive.cl
 	cat $^ > LDMRun.cl
@@ -15,6 +15,12 @@ LDMParser: LDMParser.c LDMGrammar.y LDMScanner.l
 	flex LDMScanner.l
 	gcc -w LDMParser.c -o LDMParser
 	rm -f lex.yy.c LDMGrammar.tab.c LDMGrammar.tab.h 
+
+SQLPParser: SQLPParser.c SQLPGrammar.y SQLPScanner.l
+	bison -d SQLPGrammar.y
+	flex SQLPScanner.l
+	gcc -w SQLPParser.c -o SQLPParser
+	rm -f lex.yy.c SQLPGrammar.tab.c SQLPGrammar.tab.h 
 
 FixLispInput: FixLispInput.cl
 	sbcl --noinform --eval "(compile-file \"FixLispInput.cl\")" --eval "(quit)"
